@@ -65,7 +65,7 @@ public class ChainedHashTable<K,V> implements HashTable<K,V> {
   /**
    * The load factor for expanding the table.
    */
-  static final double LOAD_FACTOR = 0.5;
+  static final double LOAD_FACTOR = 0.1;
 
   // +--------+----------------------------------------------------------
   // | Fields |
@@ -162,7 +162,18 @@ public class ChainedHashTable<K,V> implements HashTable<K,V> {
       } // if reporter != null
       throw new IndexOutOfBoundsException("Invalid key: " + key);
     } else {
-      Pair<K,V> pair = alist.get(0);
+      Pair<K,V> pair= new Pair<K,V>(null, null) ;
+      boolean found = false;
+      for(int i=0;i<alist.size();i++){
+        pair = alist.get(i);
+        if(pair.key().equals(key)){
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        throw new IndexOutOfBoundsException("Invalid key: " + key);
+      }
       if (REPORT_BASIC_CALLS && (reporter != null)) {
         reporter.report("get(" + key + ") => " + pair.value());
       } // if reporter != null
@@ -204,6 +215,13 @@ public class ChainedHashTable<K,V> implements HashTable<K,V> {
     if (alist == null) {
       alist = new ArrayList<Pair<K,V>>();
       this.buckets[index] = alist;
+    }
+    for (int i = 0; i < alist.size(); i++) {
+      if (alist.get(i).key().equals(key)) {
+        V old = alist.get(i).value();
+        alist.set(i, new Pair<K, V>(key, value));
+        return old;
+      }
     }
     alist.add(new Pair<K,V>(key, value));
     ++this.size;
@@ -302,14 +320,25 @@ public class ChainedHashTable<K,V> implements HashTable<K,V> {
   /**
    * Expand the size of the table.
    */
-  void expand() {
-    // Figure out the size of the new table
-    int newSize = 2 * this.buckets.length + rand.nextInt(10);
-    if (REPORT_BASIC_CALLS && (reporter != null)) {
-      reporter.report("Expanding to " + newSize + " elements.");
-    } // if reporter != null
-    // STUB
-  } // expand()
+
+    void expand() {
+      // Figure out the size of the new table
+      int newSize = 2 * this.buckets.length + rand.nextInt(10);
+      if (REPORT_BASIC_CALLS && (reporter != null)) {
+        reporter.report("Expanding to " + newSize + " elements.");
+      } // if reporter != null
+      // Remember the old table
+      Object[] oldBuckets = this.buckets;
+      // Create a new table of that size.
+      this.buckets = new Object[newSize];
+      // Move all buckets from the old table to their appropriate
+      // location in the new table.
+      for (int i = 0; i < oldBuckets.length; i++) {
+        for()
+        this.buckets[i].get[] = oldBuckets[i];
+      } // for
+    } // expand()
+  
 
   /**
    * Find the index of the entry with a given key. If there is no such entry,
