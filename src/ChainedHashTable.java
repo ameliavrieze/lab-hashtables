@@ -334,8 +334,8 @@ public class ChainedHashTable<K,V> implements HashTable<K,V> {
       // Move all buckets from the old table to their appropriate
       // location in the new table.
       for (int i = 0; i < oldBuckets.length; i++) {
-        for()
-        this.buckets[i].get[] = oldBuckets[i];
+        //for()
+        //this.buckets[i].get() = oldBuckets[i];
       } // for
     } // expand()
   
